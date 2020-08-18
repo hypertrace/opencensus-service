@@ -1,0 +1,14 @@
+exporters:
+  kafka:
+    brokers:
+      - 'kafka-zookeeper:9092'
+    topic: jaeger-spans
+log-level: INFO
+receivers:
+  jaeger: {}
+  opencensus:
+    keepalive:
+      server-parameters: null
+    max-connection-age: 120s
+    max-connection-age-grace: 30s
+  zipkin: {}
