@@ -12,7 +12,7 @@ require (
 	github.com/DataDog/opencensus-go-exporter-datadog v0.0.0-20181026070331-e7c4bd17b329
 	github.com/Shopify/sarama v1.19.0
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
-	github.com/apache/thrift v0.0.0-20161221203622-b2a4d4ae21c7
+	github.com/apache/thrift v0.13.0 //indirect
 	github.com/bmizerany/perks v0.0.0-20141205001514-d9a9656a3a4b // indirect
 	github.com/census-instrumentation/opencensus-proto v0.2.1
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
@@ -26,6 +26,7 @@ require (
 	github.com/honeycombio/opencensus-exporter v1.0.1
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jaegertracing/jaeger v1.9.0
+	github.com/miekg/dns v1.1.25
 	github.com/omnition/scribe-go v0.0.0-20190131012523-9e3c68f31124
 	github.com/openzipkin/zipkin-go v0.1.6
 	github.com/orijtech/prometheus-go-metrics-exporter v0.0.3
@@ -61,7 +62,5 @@ require (
 	gopkg.in/DataDog/dd-trace-go.v1 v1.12.1 // indirect
 	gopkg.in/yaml.v2 v2.2.5
 )
-
-replace git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
 
 go 1.13
