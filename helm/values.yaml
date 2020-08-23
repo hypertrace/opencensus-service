@@ -27,6 +27,7 @@ containerPorts:
     containerPort: 14268
 
 service:
+  annotations: {}
   type: ClusterIP
   ports:
   - name: grpc-opencensus
