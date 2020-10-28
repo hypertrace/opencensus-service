@@ -11,12 +11,21 @@ executors:
   gradle_docker:
     docker:
       - image: circleci/openjdk:11-jdk
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
   golang_docker:
     docker:
       - image: circleci/golang:1.13
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
   helm:
     docker:
       - image: hypertrace/helm-gcs-packager:0.1.1
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_PASSWORD
 
 commands:
   setup_build_environment:
@@ -24,6 +33,12 @@ commands:
       - checkout
       - attach_workspace:
           at: *workspace_root
+  docker_login:
+    description: "Login to dockerhub with readonly credentials"
+    steps:
+      - run:
+          name: Dockerhub login
+          command: echo $DOCKERHUB_PASSWORD | docker login --username $DOCKERHUB_USERNAME --password-stdin
 
 jobs:
   build:
@@ -48,6 +63,7 @@ jobs:
             - "4b:17:55:41:7c:82:34:17:ff:2a:6b:02:cf:6f:86:25"
       - setup_build_environment
       - setup_remote_docker
+      - docker_login
       - run: ./gradlew :tag -Prelease
       - run: cp -v /tmp/workspace/occollector_linux ./cmd/occollector/
       - run: ./gradlew dockerPushImages
@@ -91,14 +107,22 @@ workflows:
   version: 2
   build-and-publish:
     jobs:
-      - build
-      - validate-charts
+      - build:
+          context:
+            - dockerhub-read
+      - validate-charts:
+          context:
+            - dockerhub-read
       - snyk-scan:
-          context: hypertrace-vulnerability-scanning
+          context:
+            - hypertrace-vulnerability-scanning
+            - dockerhub-read
           requires:
             - build
       - publish:
-          context: hypertrace-publishing
+          context:
+            - hypertrace-publishing
+            - dockerhub-read
           requires:
             - build
             - validate-charts
@@ -107,7 +131,9 @@ workflows:
               only:
                 - main
       - package-charts:
-          context: hypertrace-publishing
+          context:
+            - hypertrace-publishing
+            - dockerhub-read
           requires:
           - publish
           filters:
