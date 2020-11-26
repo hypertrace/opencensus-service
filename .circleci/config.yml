@@ -62,6 +62,7 @@ jobs:
       - setup_remote_docker: &latest_remote_docker
           version: 19.03.12
       - docker_login
+      - run: cp -v /tmp/workspace/occollector_linux ./cmd/occollector/
       - run: ./gradlew dockerPushImages
   release-publish:
     executor: gradle_docker
@@ -69,6 +70,7 @@ jobs:
       - setup_build_environment
       - setup_remote_docker: *latest_remote_docker
       - docker_login
+      - run: cp -v /tmp/workspace/occollector_linux ./cmd/occollector/
       - run: ./gradlew dockerPushImages
   validate-charts:
     executor: helm
