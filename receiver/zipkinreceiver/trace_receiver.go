@@ -384,6 +384,8 @@ func zipkinSpanToTraceSpan(zs *zipkinmodel.SpanModel) (*tracepb.Span, *commonpb.
 		}
 	}
 
+	kind, kindAttr := zipkinSpanKindToProtoSpanKind(zs.Kind)
+
 	pbs := &tracepb.Span{
 		TraceId:      traceID,
 		SpanId:       spanID,
@@ -391,10 +393,19 @@ func zipkinSpanToTraceSpan(zs *zipkinmodel.SpanModel) (*tracepb.Span, *commonpb.
 		Name:         &tracepb.TruncatableString{Value: zs.Name},
 		StartTime:    internal.TimeToTimestamp(zs.Timestamp),
 		EndTime:      internal.TimeToTimestamp(zs.Timestamp.Add(zs.Duration)),
-		Kind:         zipkinSpanKindToProtoSpanKind(zs.Kind),
+		Kind:         kind,
 		Status:       extractProtoStatus(zs),
 		Attributes:   zipkinTagsToTraceAttributes(zs.Tags),
 		TimeEvents:   zipkinAnnotationsToProtoTimeEvents(zs.Annotations),
+	}
+
+	if kindAttr != nil {
+		if pbs.Attributes == nil {
+			pbs.Attributes = &tracepb.Span_Attributes{AttributeMap: map[string]*tracepb.AttributeValue{}}
+		}
+		for k, v := range kindAttr.GetAttributeMap() {
+			pbs.GetAttributes().GetAttributeMap()[k] = v
+		}
 	}
 
 	return pbs, node, nil
@@ -511,14 +522,22 @@ var canonicalCodesMap = map[string]int32{
 	"UNAUTHENTICATED":     16,
 }
 
-func zipkinSpanKindToProtoSpanKind(skind zipkinmodel.Kind) tracepb.Span_SpanKind {
+func zipkinSpanKindToProtoSpanKind(skind zipkinmodel.Kind) (tracepb.Span_SpanKind, *tracepb.Span_Attributes) {
 	switch strings.ToUpper(string(skind)) {
 	case "CLIENT":
-		return tracepb.Span_CLIENT
+		return tracepb.Span_CLIENT, nil
 	case "SERVER":
-		return tracepb.Span_SERVER
+		return tracepb.Span_SERVER, nil
 	default:
-		return tracepb.Span_SPAN_KIND_UNSPECIFIED
+		return tracepb.Span_SPAN_KIND_UNSPECIFIED, &tracepb.Span_Attributes{
+			AttributeMap: map[string]*tracepb.AttributeValue{
+				"span.kind": {
+					Value: &tracepb.AttributeValue_StringValue{
+						StringValue: &tracepb.TruncatableString{Value: strings.ToLower(string(skind))},
+					},
+				},
+			},
+		}
 	}
 }
 
