@@ -528,16 +528,28 @@ func zipkinSpanKindToProtoSpanKind(skind zipkinmodel.Kind) (tracepb.Span_SpanKin
 		return tracepb.Span_CLIENT, nil
 	case "SERVER":
 		return tracepb.Span_SERVER, nil
-	default:
+	case "PRODUCER":
 		return tracepb.Span_SPAN_KIND_UNSPECIFIED, &tracepb.Span_Attributes{
 			AttributeMap: map[string]*tracepb.AttributeValue{
 				"span.kind": {
 					Value: &tracepb.AttributeValue_StringValue{
-						StringValue: &tracepb.TruncatableString{Value: strings.ToLower(string(skind))},
+						StringValue: &tracepb.TruncatableString{Value: "producer"},
 					},
 				},
 			},
 		}
+	case "CONSUMER":
+		return tracepb.Span_SPAN_KIND_UNSPECIFIED, &tracepb.Span_Attributes{
+			AttributeMap: map[string]*tracepb.AttributeValue{
+				"span.kind": {
+					Value: &tracepb.AttributeValue_StringValue{
+						StringValue: &tracepb.TruncatableString{Value: "consumer"},
+					},
+				},
+			},
+		}
+	default:
+		return tracepb.Span_SPAN_KIND_UNSPECIFIED, nil
 	}
 }
 
