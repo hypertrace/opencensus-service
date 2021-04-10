@@ -63,6 +63,6 @@ require (
 	gopkg.in/yaml.v2 v2.2.8
 )
 
-replace git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
+replace git.apache.org/thrift.git => github.com/apache/thrift v0.13.0
 
 go 1.13
