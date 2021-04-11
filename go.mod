@@ -26,6 +26,7 @@ require (
 	github.com/honeycombio/opencensus-exporter v1.0.1
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jaegertracing/jaeger v1.9.0
+	github.com/miekg/dns v1.1.25
 	github.com/omnition/scribe-go v0.0.0-20190131012523-9e3c68f31124
 	github.com/openzipkin/zipkin-go v0.1.6
 	github.com/orijtech/prometheus-go-metrics-exporter v0.0.3
@@ -59,9 +60,9 @@ require (
 	google.golang.org/api v0.8.0
 	google.golang.org/grpc v1.22.1
 	gopkg.in/DataDog/dd-trace-go.v1 v1.12.1 // indirect
-	gopkg.in/yaml.v2 v2.2.5
+	gopkg.in/yaml.v2 v2.2.8
 )
 
-replace git.apache.org/thrift.git => github.com/apache/thrift v0.12.0
+replace git.apache.org/thrift.git => github.com/apache/thrift v0.13.0
 
 go 1.13
